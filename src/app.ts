@@ -24,20 +24,19 @@ let turn: number, winner: boolean, tie: boolean, board: number[]
 
 /*------------------------ Cached Element References ------------------------*/
 //Step 2 - Store cached element references 
-const squareEls = document.querySelectorAll <HTMLElement>(".sqr")
+const squareEls : NodeListOf<HTMLDivElement> = document.querySelectorAll (".sqr")
 const messageEl = document.getElementById("message")!
 const resetBtnEl=document.getElementById("reset")!
+const boardEl =document.querySelector<HTMLElement>(".board")!
  console.log(winningCombos)
  /*----------------------------- Event Listeners -----------------------------*/
-window?.addEventListener("load", init)
-squareEls.forEach(function (sqrEl): void{
-    sqrEl?.addEventListener("click", handleClick)
-}) 
+
+boardEl.addEventListener("click",handleClick)
 resetBtnEl?.addEventListener("click", init)
 /*-------------------------------- Functions --------------------------------*/
 //Step 3 - Upon loading, the game state should be initialized, and a function should be called to render this game state
-
-function init(event:MouseEvent):void{
+init()
+function init():void{
     board = [0, 0, 0, 0, 0, 0, 0, 0, 0]
     turn = 1
     winner = false
@@ -54,7 +53,7 @@ function render():void{
 function updateBoard():void{
      board.forEach(function(element,idx){
        let sqrValue= element
-       if (element === null){ 
+       if (element === 0){ 
         squareEls[idx].textContent = ''
        } else if( element === 1 ){
         squareEls[idx].textContent = 'X'
@@ -82,10 +81,11 @@ function updateMessage(){
 
 //Step 6 - Handle a player clicking a square with a `handleClick` function
 
-function handleClick(evt: MouseEvent):void {
-const sqIdx = +evt.target!.('id'in evt.target!).slice(2)
+function handleClick(evt: Event) {
+if(!(evt.target instanceof HTMLElement)) return
+const sqIdx: number= parseInt(evt.target.id.slice(2))
 console.log(sqIdx)
-if (board[sqIdx] !== null){
+if (board[sqIdx] !== 0){
     return
 } else if (winner === true){
     return
@@ -97,7 +97,7 @@ switchPlayerTurn()
 render()
 }
 //6.1 - placePiece
-function placePiece(sqIdx){
+function placePiece(sqIdx:number){
 return (board[sqIdx] = turn)
 }
 // turn = -1
@@ -107,7 +107,7 @@ return (board[sqIdx] = turn)
 
 function checkForTie(){
     const hasNull = board.some(function(element){
-        return element === null
+        return element === 0
     })
     //console.log(hasNull)
     if (hasNull === true) {
@@ -135,23 +135,23 @@ function switchPlayerTurn(){
 }
 
 //Confetti function
-function Confetti(){
-    let duration = 1 * 1000;
-    let animationEnd = Date.now() + duration;
-    let defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+// function Confetti(){
+//     let duration = 1 * 1000;
+//     let animationEnd = Date.now() + duration;
+//     let defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
     
-    function randomInRange(min, max) {
-      return Math.random() * (max - min) + min;
-    }
+//     function randomInRange(min:number, max: number) {
+//       return Math.random() * (max - min) + min;
+//     }
     
-    let interval = setInterval(function() {
-      let timeLeft = animationEnd - Date.now();
+//     let interval = setInterval(function() {
+//       let timeLeft = animationEnd - Date.now();
     
-      if (timeLeft <= 0) {
-        return clearInterval(interval);
-      }
+//       if (timeLeft <= 0) {
+//         return clearInterval(interval);
+//       }
     
-      let particleCount = 50 * (timeLeft / duration);
+//       let particleCount = 50 * (timeLeft / duration);
 //       // since particles fall down, start a bit higher than random
 //       confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
 //       confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
